@@ -1,0 +1,142 @@
+# Personal overrides. Keep customizations here, outside node_modules.
+nav:
+  logo: /assets/avatar.svg
+  display_title: true
+  display_post_title: false
+  fixed: true
+menu:
+  首页: / || fas fa-house
+  归档: /archives/ || fas fa-box-archive
+  标签: /tags/ || fas fa-tags
+  使用说明: /posts/guide/ || fas fa-book-open
+  关于: /about/ || fas fa-user
+favicon: /assets/avatar.svg
+avatar:
+  img: /assets/avatar.svg
+  effect: false
+default_top_img: /assets/lighthouse-dusk.png
+index_img: /assets/lighthouse-dusk.png
+background: /assets/lighthouse-dusk.png
+index_top_img_height: 440px
+index_site_info_top: 185px
+index_layout: 1
+index_post_content:
+  method: 2
+  length: 160
+cover:
+  index_enable: true
+  aside_enable: false
+  archives_enable: false
+  default_cover:
+    - /assets/lighthouse-dusk.png
+subtitle:
+  enable: false
+  effect: false
+  sub: []
+display_mode: dark
+darkmode:
+  enable: true
+  button: false
+  autoChangeMode: false
+code_blocks:
+  theme: ocean
+  macStyle: true
+  copy: true
+  language: true
+  word_wrap: false
+  shrink: false
+toc:
+  post: true
+  page: false
+  number: false
+  expand: true
+  scroll_percent: true
+post_copyright:
+  enable: false
+related_post:
+  enable: false
+post_meta:
+  page:
+    date_type: created
+    date_format: date
+    categories: true
+    tags: true
+    label: true
+  post:
+    position: left
+    date_type: both
+    date_format: date
+    categories: true
+    tags: true
+    label: true
+aside:
+  enable: true
+  hide: false
+  mobile: true
+  position: right
+  card_author:
+    enable: true
+    description: 记录 CTF 思路与学习笔记
+    button:
+      enable: true
+      icon: fas fa-compass
+      text: 关于这个博客
+      link: /about/
+  card_announcement:
+    enable: false
+    content: ''
+  card_recent_post:
+    enable: true
+    limit: 5
+  card_categories:
+    enable: false
+  card_tags:
+    enable: true
+    orderby: name
+  card_archives:
+    enable: false
+  card_webinfo:
+    enable: false
+search:
+  use: local_search
+  placeholder: 搜索题目、知识点或标签…
+  local_search:
+    preload: true
+    top_n_per_article: 2
+    unescape: false
+    pagination:
+      enable: false
+share:
+  use:
+busuanzi:
+  site_uv: false
+  site_pv: false
+  page_pv: false
+lightbox: false
+readmode: true
+enter_transitions: false
+hr_icon:
+  enable: false
+footer:
+  owner:
+    enable: true
+    since: 2026
+  copyright:
+    enable: true
+    version: false
+  custom_text: ''
+font:
+  global_font_size: 16px
+  code_font_size: 14px
+  font_family: '"Segoe UI", "Microsoft YaHei", sans-serif'
+CDN:
+  internal_provider: local
+  third_party_provider: jsdelivr
+  version: true
+  option:
+    fontawesome: /assets/fontawesome/css/all.min.css
+inject:
+  head:
+    - <link rel="stylesheet" href="/css/custom.css">
+  bottom:
+    - <script src="/js/custom.js" defer></script>

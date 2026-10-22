@@ -1,6 +1,6 @@
 'use strict';
 const http = require('node:http');
-const { execFile } = require('node:child_process');
+const { createPublisher } = require('../publish.cjs');
 const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
@@ -116,39 +116,7 @@ function createWriterServer({ root = path.resolve(__dirname, '../..'), onShutdow
     fs.writeFileSync(file + '.tmp', text, 'utf8'); fs.renameSync(file + '.tmp', file);
     return readPage(name);
   }
-  function gitExecutable() {
-    const candidates = [
-      path.join(process.env.ProgramFiles || 'C:\\Program Files', 'Git', 'cmd', 'git.exe'),
-      path.join(process.env['ProgramFiles(x86)'] || 'C:\\Program Files (x86)', 'Git', 'cmd', 'git.exe'),
-      'git'
-    ];
-    for (const candidate of candidates) { if (candidate === 'git' || fs.existsSync(candidate)) return candidate; }
-    return 'git';
-  }
-  function runGit(args) {
-    return new Promise((resolve, reject) => {
-      execFile(gitExecutable(), args, { cwd: root, windowsHide: true, timeout: 120000, env: { ...process.env, GIT_TERMINAL_PROMPT: '0' } }, (error, stdout, stderr) => {
-        if (error) { const detail = String(stderr || stdout || error.message).trim().slice(-800); reject(Object.assign(new Error(detail || 'Git 操作失败。'), { status: 500 })); return; }
-        resolve(String(stdout || ''));
-      });
-    });
-  }
-  let publishing = false;
-  async function publishSite() {
-    if (publishing) fail('正在发布，请稍等一下。', 409);
-    publishing = true;
-    try {
-      await runGit(['add', '-A']);
-      const tree = (await runGit(['write-tree'])).trim();
-      let headTree = '';
-      try { headTree = (await runGit(['rev-parse', 'HEAD^{tree}'])).trim(); } catch { /* First publish has no HEAD yet. */ }
-      if (tree === headTree) return { published: true, committed: false, rewritten: false, output: '' };
-      const commit = (await runGit(['commit-tree', tree, '-m', 'Update blog ' + dateText()])).trim();
-      await runGit(['update-ref', 'refs/heads/main', commit]);
-      const output = await runGit(['push', '--force', 'origin', 'main']);
-      return { published: true, committed: true, rewritten: true, output: output.trim().slice(-300) };
-    } finally { publishing = false; }
-  }
+  const publishSite = createPublisher({ root });
   function deletePost(data) {
     const loc = locate(data.id);
     if (!fs.existsSync(loc.file)) fail('文章不存在。', 404);
@@ -159,7 +127,10 @@ function createWriterServer({ root = path.resolve(__dirname, '../..'), onShutdow
   }
   async function deletePostAndPublish(data) {
     const result = deletePost(data);
-    if (result.status === 'posts') { const run = await publishSite(); result.published = run.published; }
+    if (result.status === 'posts') {
+      try { const run = await publishSite(); result.published = run.published; }
+      catch (error) { result.publishError = error.message; }
+    }
     return result;
   }
   function decodeImage(data, max) {    const types = { 'image/png': 'png', 'image/jpeg': 'jpg', 'image/webp': 'webp', 'image/gif': 'gif' };
